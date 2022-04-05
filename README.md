@@ -65,7 +65,8 @@ Only number of pressors matters, not dose.
 
 
 ### SOFA respiratory
-Treat all respiratory support equivalently, i.e. make no distinction between mechanical ventilation, NIPPV (CPAP/BiPAP), high-flow, or low-flow nasal cannula
+
+
 
 * P/F <=100 -> 4 (must be on respiratory support)
 * P/F 100-200 -> 3 (must be on respiratory support)
@@ -84,6 +85,8 @@ In other words, use the respiratory SOFA calculated from a blood gas for 4 hours
 
 
 #### Notes:
+* Treat all high-level ICU respiratory support equivalently, i.e. make no distinction between mechanical ventilation, NIPPV (CPAP/BiPAP), high-flow
+* patients on low-flow nasal cannula can get at most a resp SOFA of 2
 * To estimate the FiO2 for a patient on low-flow nasal cannula, use the following formula where LPM = liters per minute of low-flow oxygen
       * Fi02 = 0.24 + 0.04*(LPM)
 
