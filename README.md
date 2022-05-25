@@ -13,7 +13,7 @@ The study population of all patients who would unambiguously need life-support i
 1) requiring invasive or non-invasive mechanical ventilation
 2) hypoxic respiratory failure with an estimated arterial pressure of oxygen (PaO2) to fraction of inspired oxygen gas (FiO2) ratio less than 200 on high-flow nasal cannula
 3) continuous vasoactive drips or mechanical circulatory support for shock
-4) ECMO for either shock or respiratory failure!
+4) ECMO for either shock or respiratory failure
 
 Operationally, this includes all patients with a respiratory SOFA > 2 *or* a cardiovascular SOFA > 2 *or* invasive/non-invasive mechanical ventilation.
 
