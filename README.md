@@ -6,7 +6,18 @@ This repository will contain two scripts, both of which accepts a clean, long fo
 2. simulation_inputs.rmd - generates a set of inputs for a discrete event microsimulation model of ICU rationing.
 
 
-## Data format 
+## Study inclusion criteria
+
+The study population of all patients who would unambiguously need life-support in an ICU during a crisis. Our inclusion criteria are 
+
+1) requiring invasive or non-invasive mechanical ventilation
+2) hypoxic respiratory failure with an estimated arterial pressure of oxygen (PaO2) to fraction of inspired oxygen gas (FiO2) ratio less than 200 on high-flow nasal cannula
+3) continuous vasoactive drips or mechanical circulatory support for shock
+4) ECMO for either shock or respiratory failure!
+
+Operationally, this includes all patients with a respiratory SOFA > 2 *or* a cardiovascular SOFA > 2 *or* invasive/non-invasive mechanical ventilation.
+
+## Common Longitudinal ICU Data (CLID) format 
 
 | encounter | time_icu | sofa_total | age_years | race               |  elix_vw    | elix_ahrq  |charlson    | vent | status | covid |  zip       |
 |-----------|----------|------------|-----------|--------------------|-------------|------------|------------|------|--------|-------|------------|
