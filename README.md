@@ -1,14 +1,31 @@
-# ICU rationing simulation
+# Common Longitudinal ICU Data Format (CLIF)
 
-This repository will contain two scripts, both of which accepts a clean, long form patient dataset in a standardized format (detailed below)
+The **Common Longitudinal ICU Data Format (CLIF)** is a standardized longitudinal (long) tidy dataset with one observation per patient per hour designed to study critically ill patients hospitalized in Intensive Care Units (ICU). These are clinical areas of the hospital where patients receive high frequency monitoring, such as hourly vital signs and nursing assessments. The basic CLIF contains demographics (Age, self-identified race and ethnicity), chronic condition data (summarized with the Agency for Healthcare Research and Quality elixhauser score, and Charlston comorbidity index), nine-digit zip code, time-dependent clinical variables (laboratory markers of end-organ function, COVID status, vital signs, nursing assessments), time-dependent treatment variables (respiratory support, vasoactive drips, continuous renal replacement therapy) and a status variable to denote the patient's status and location at the end of the hour interval.
+
+
+This README file contains detailed instructions for coding your healthcare system's EHR data into CLIF. This repository also contains two analysis scripts, both of which accepts a clean, long form patient dataset in CLIF.
 
 1. quality_control_check.rmd - performs various quality control checks on the data
-2. simulation_inputs.rmd - generates a set of inputs for a discrete event microsimulation model of ICU rationing.
+2. simulation_inputs.rmd - generates a set of aggregate inputs for the ICU Crisis Simulation Model (ICSM), a discrete event microsimulation model of ICU allocation in a crisis scenario. CLIF was first designed for this application.
 
 
-## Study inclusion criteria
+## Sample of data prepared in CLIF
 
-The study population of all patients who would unambiguously need life-support in an ICU during a crisis. Our inclusion criteria are 
+Below is a sample patient in record prepared in CLIF.
+
+| encounter | time_icu | sofa_total | age | race  | ethnicity    | elix_ahrq |charlson    | vent | status | covid |  zip       |
+|-----------|----------|------------|-----------|-------|--------------|----------|------------|------|--------|-------|------------|
+| 1         | 0        | 6          | 75        | White | Non-hispanic |19        | 3          | 0    | icu    |  1    | XXXXX-YYYY |
+| 1         | 1        | 6          | 75        | White | Non-hispanic |19        | 3          | 0    | icu    |  1    | XXXXX-YYYY |
+| 1         | 2        | 7          | 75        | White | Non-hispanic |19        | 3          | 0    | icu    |  1    | XXXXX-YYYY |
+
+Only key columns are included in sample above, but the full CLIF contains all the data variables mentioned below as well as all SOFA sub-components.
+
+**encounter** is an ID variable for each ICU stay (so a given patient can have multiple values), so please also include a second **patient** ID variable.
+
+## Patient populations for CLIF
+
+What exactly consitutes an ICU varies significantly between hospitals. When preparing data in CLIF, be inclusive of all patients who are considered ICU status, as collaborators writing scripts prepared for CLIF can filter down to their desired patient population. For example, the study population for the ICSM project is all patients who would unambiguously need life-support in an ICU during a crisis (inclusion criteria below).
 
 1) requiring invasive or non-invasive mechanical ventilation
 2) hypoxic respiratory failure with an estimated arterial pressure of oxygen (PaO2) to fraction of inspired oxygen gas (FiO2) ratio less than 200 on high-flow nasal cannula
@@ -17,30 +34,29 @@ The study population of all patients who would unambiguously need life-support i
 
 Operationally, this includes all patients with a respiratory SOFA > 2 *or* a cardiovascular SOFA > 2 *or* invasive/non-invasive mechanical ventilation.
 
-## Common Longitudinal ICU Data (CLID) format 
+## Race and ethnicity cateogries
 
-| encounter | time_icu | sofa_total | age_years | race               |  elix_vw    | elix_ahrq  |charlson    | vent | status | covid |  zip       |
-|-----------|----------|------------|-----------|--------------------|-------------|------------|------------|------|--------|-------|------------|
-| 1         | 0        | 6          | 75        | Non-Hispanic White |     22      |  19        | 3          | 0    | icu    |  1    | XXXXX-YYYY |
-| 1         | 1        | 6          | 75        | Non-Hispanic White |     22      |  19        | 3          | 0    | icu    |  1    | XXXXX-YYYY |
-| 1         | 2        | 7          | 75        | Non-Hispanic White |     22      |  19        | 3          | 0    | icu    |  1    | XXXXX-YYYY |
+Use the patient's self-identified race and ethnicity as documented in the electronic medical record per the american census definitions.
 
-Only key columns for transition matrices included in sample above, feel free to include more variables (SOFA sub-components).
-
-**encounter** is an ID variable for each ICU stay (so a given patient can have multiple values).
-
-## Race/ethnicity cateogries
-
-* Non-Hispanic White
-* Non-Hispanic Black
-* Hispanic
+### Race categories
+* White
+* Black or African American
+* Asian American
+* Native Hawiian or Other Pacific Islander
+* American Indian or Alaska Native
 * Other              
+
+### Ethnicity
+Please include ethnicity as a seperate binary indicator variable
+* Hispanic
+* Non-hispanic
+
 
 ## Comorbidity calculation
 
-Please report the ARHQ Elixhauser score (Moore et al., 2017), weighted VW Elixhauser (van Walraven et al. 2009), and Charlson index (Charlson 1987) calculated from ICD codes with the ![comorbidity](https://cran.r-project.org/web/packages/comorbidity/index.html) package in R
+Please report the ARHQ Elixhauser score (Moore et al., 2017), weighted VW Elixhauser (van Walraven et al. 2009), and Charlson index (Charlson 1987) calculated from ICD codes with the [comorbidity](https://cran.r-project.org/web/packages/comorbidity/index.html) package in R
 
-The simulation_inputs.Rmd file will assign comoribidity category cutoffs for the simulation matrices in a standardized way across datasets
+Different analyses can use this data in different ways. For example, `simulation_inputs.Rmd` will assign comoribidity category cutoffs for the simulation matrices in a standardized way across datasets
 
 ## Status variable
 
@@ -76,8 +92,6 @@ Only number of pressors matters, not dose.
 
 
 ### SOFA respiratory
-
-
 
 * P/F <=100 -> 4 (must be on respiratory support)
 * P/F 100-200 -> 3 (must be on respiratory support)
@@ -146,5 +160,5 @@ By recorded Glascow Coma Scale (GCS). If GCS is missing, a score of zero is assi
 
 
 ## Other notes
-* Do not need to filter out patients who are still in the hospital at the end of follow-up. Can use their censored data in the transition matrices
+* Do not need to filter out patients who are still in the hospital at the end of follow-up. Can use their censored data in many applications, for example the ICSM transition matrices.
 * 9-digit zip code is preferred for more granular mapping to measures like the the Area Deprivation Index (https://rdrr.io/cran/sociome/man/get_adi.html)
